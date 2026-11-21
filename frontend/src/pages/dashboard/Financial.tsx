@@ -12,68 +12,79 @@ import { toast } from "sonner";
 
 const COLORS = ["hsl(350, 65%, 52%)", "hsl(35, 80%, 56%)", "hsl(200, 60%, 50%)", "hsl(150, 50%, 45%)"];
 
+const emptySummary = {
+  daily_revenue: 0,
+  monthly_revenue: 0,
+  daily_expenses: 0,
+  monthly_expenses: 0,
+  pending_payments: 0,
+  revenue_by_month: [],
+  revenue_by_service: [],
+};
+
 const Financial = () => {
-  const [financial, setFinancial] = useState<any>(null);
+  const [summary, setSummary] = useState<any>(emptySummary);
 
   useEffect(() => {
-    api.financial.summary().then(setFinancial).catch((e: any) => toast.error(e.message || "Erro ao carregar financeiro"));
+    api.financial.summary()
+      .then(data => setSummary({ ...emptySummary, ...data }))
+      .catch((error: any) => toast.error(error.message || "Erro ao carregar financeiro"));
   }, []);
 
-  const revenueByMonth = financial?.revenue_by_month || [];
-  const revenueByService = financial?.revenue_by_service || [];
+  const monthlyRows = (summary.revenue_by_month || []).map((m: any) => ({
+    month: m.month,
+    revenue: Number(m.revenue || m.value || 0),
+    expenses: Number(m.expenses || 0),
+    profit: Number(m.revenue || m.value || 0) - Number(m.expenses || 0),
+  }));
+  const serviceRows = summary.revenue_by_service || [];
 
-  const handleExportCSV = () => {
-    const data = revenueByMonth.map((m: any) => ({ month: m.month, revenue: m.revenue, expenses: m.expenses, profit: m.revenue - m.expenses }));
-    exportToCSV({
-      title: "Relatório Financeiro - GenOmni Salon",
-      subtitle: "Receitas e Despesas Mensais",
-      columns: [
-        { header: "Mês", key: "month" },
-        { header: "Receita", key: "revenue", format: "currency" },
-        { header: "Despesas", key: "expenses", format: "currency" },
-        { header: "Lucro", key: "profit", format: "currency" },
-      ],
-      data,
-      summary: [
-        { label: "Receita Hoje", value: formatKz(financial?.daily_revenue || 0) },
-        { label: "Receita Mensal", value: formatKz(financial?.monthly_revenue || 0) },
-        { label: "Despesas Mensal", value: formatKz(financial?.monthly_expenses || 0) },
-      ],
-      filename: "relatorio-financeiro",
-    });
-  };
+  const handleExportCSV = () => exportToCSV({
+    title: "Relatório Financeiro - GenOmni Salon",
+    subtitle: "Receitas e Despesas Mensais",
+    columns: [
+      { header: "Mês", key: "month" },
+      { header: "Receita", key: "revenue", format: "currency" },
+      { header: "Despesas", key: "expenses", format: "currency" },
+      { header: "Lucro", key: "profit", format: "currency" },
+    ],
+    data: monthlyRows,
+    summary: [
+      { label: "Receita Hoje", value: formatKz(summary.daily_revenue) },
+      { label: "Receita Mensal", value: formatKz(summary.monthly_revenue) },
+      { label: "Despesas Mensal", value: formatKz(summary.monthly_expenses) },
+    ],
+    filename: "relatorio-financeiro",
+  });
 
-  const handleExportPDF = () => {
-    const data = revenueByMonth.map((m: any) => ({ month: m.month, revenue: m.revenue, expenses: m.expenses, profit: m.revenue - m.expenses }));
-    exportToPDF({
-      title: "Relatório Financeiro",
-      subtitle: "Receitas e Despesas Mensais",
-      columns: [
-        { header: "Mês", key: "month" },
-        { header: "Receita", key: "revenue", format: "currency" },
-        { header: "Despesas", key: "expenses", format: "currency" },
-        { header: "Lucro", key: "profit", format: "currency" },
-      ],
-      data,
-      summary: [
-        { label: "Receita Hoje", value: formatKz(financial?.daily_revenue || 0) },
-        { label: "Receita Mensal", value: formatKz(financial?.monthly_revenue || 0) },
-        { label: "Despesas", value: formatKz(financial?.monthly_expenses || 0) },
-        { label: "A Receber", value: formatKz(financial?.pending_payments || 0) },
-      ],
-      filename: "relatorio-financeiro",
-    });
-  };
+  const handleExportPDF = () => exportToPDF({
+    title: "Relatório Financeiro",
+    subtitle: "Receitas e Despesas Mensais",
+    columns: [
+      { header: "Mês", key: "month" },
+      { header: "Receita", key: "revenue", format: "currency" },
+      { header: "Despesas", key: "expenses", format: "currency" },
+      { header: "Lucro", key: "profit", format: "currency" },
+    ],
+    data: monthlyRows,
+    summary: [
+      { label: "Receita Hoje", value: formatKz(summary.daily_revenue) },
+      { label: "Receita Mensal", value: formatKz(summary.monthly_revenue) },
+      { label: "Despesas", value: formatKz(summary.monthly_expenses) },
+      { label: "A Receber", value: formatKz(summary.pending_payments) },
+    ],
+    filename: "relatorio-financeiro",
+  });
 
   return (
     <div className="space-y-6">
       <PageHeader title="Financeiro" subtitle="Visão geral das finanças" actions={<ExportButton onExportCSV={handleExportCSV} onExportPDF={handleExportPDF} />} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Receita Hoje" value={formatKz(financial?.daily_revenue || 0)} icon={TrendingUp} />
-        <StatCard title="Receita Mensal" value={formatKz(financial?.monthly_revenue || 0)} icon={DollarSign} trend={{ value: 15, positive: true }} />
-        <StatCard title="Despesas Mensal" value={formatKz(financial?.monthly_expenses || 0)} icon={TrendingDown} />
-        <StatCard title="A Receber" value={formatKz(financial?.pending_payments || 0)} icon={AlertCircle} />
+        <StatCard title="Receita Hoje" value={formatKz(summary.daily_revenue)} icon={TrendingUp} />
+        <StatCard title="Receita Mensal" value={formatKz(summary.monthly_revenue)} icon={DollarSign} trend={{ value: 15, positive: true }} />
+        <StatCard title="Despesas Mensal" value={formatKz(summary.monthly_expenses)} icon={TrendingDown} />
+        <StatCard title="A Receber" value={formatKz(summary.pending_payments)} icon={AlertCircle} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -83,10 +94,10 @@ const Financial = () => {
           </CardHeader>
           <CardContent className="pt-6">
             <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={revenueByMonth}>
+              <BarChart data={monthlyRows}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" />
-                <YAxis stroke="hsl(var(--muted-foreground))" tickFormatter={v => `${(v / 1000).toFixed(0)}k`} />
+                <YAxis stroke="hsl(var(--muted-foreground))" tickFormatter={v => `${(Number(v) / 1000).toFixed(0)}k`} />
                 <Tooltip contentStyle={{ borderRadius: "0.5rem", border: "1px solid hsl(var(--border))", background: "hsl(var(--card))" }} formatter={(value: number) => [formatKz(value)]} />
                 <Bar dataKey="revenue" name="Receita" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
                 <Bar dataKey="expenses" name="Despesas" fill="hsl(var(--accent))" radius={[6, 6, 0, 0]} />
@@ -102,8 +113,8 @@ const Financial = () => {
           <CardContent className="pt-6">
             <ResponsiveContainer width="100%" height={280}>
               <PieChart>
-                <Pie data={revenueByService} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}>
-                  {revenueByService.map((_: any, i: number) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                <Pie data={serviceRows} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                  {serviceRows.map((_: any, i: number) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                 </Pie>
                 <Tooltip formatter={(value: number) => [formatKz(value)]} />
               </PieChart>

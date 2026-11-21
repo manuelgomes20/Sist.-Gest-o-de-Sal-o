@@ -44,6 +44,9 @@ def _tenant_to_out(t: Tenant) -> TenantOut:
         created_at=t.created_at,
         last_access=t.last_access,
         next_billing=t.next_billing,
+        billing_cycle=t.billing_cycle,
+        auto_suspend=t.auto_suspend,
+        grace_days=t.grace_days,
     )
 
 

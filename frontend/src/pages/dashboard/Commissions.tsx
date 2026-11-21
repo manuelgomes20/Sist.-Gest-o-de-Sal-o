@@ -10,40 +10,55 @@ import { formatKz } from "@/lib/format";
 import { toast } from "sonner";
 
 const Commissions = () => {
-  const [data, setData] = useState<any>({ total_commissions: 0, items: [] });
+  const [items, setItems] = useState<any[]>([]);
+  const [totalCommissions, setTotalCommissions] = useState(0);
 
   useEffect(() => {
-    api.financial.commissions().then(setData).catch((e: any) => toast.error(e.message || "Erro ao carregar comissões"));
+    api.financial.commissions()
+      .then(data => {
+        setItems(data.items || []);
+        setTotalCommissions(Number(data.total_commissions || 0));
+      })
+      .catch((error: any) => toast.error(error.message || "Erro ao carregar comissões"));
   }, []);
 
-  const commissionData = data.items || [];
-  const totalCommissions = data.total_commissions || 0;
+  const exportRows = items.map(e => ({
+    name: e.name,
+    role: e.role,
+    appointments: e.appointments,
+    totalRevenue: e.total_revenue,
+    commission: e.commission_rate,
+    commissionValue: e.commission_value,
+  }));
 
   const exportColumns = [
     { header: "Funcionário", key: "name" },
     { header: "Função", key: "role" },
     { header: "Atendimentos", key: "appointments", format: "number" as const },
-    { header: "Receita", key: "total_revenue", format: "currency" as const },
-    { header: "% Comissão", key: "commission_rate", format: "percent" as const },
-    { header: "Valor Comissão", key: "commission_value", format: "currency" as const },
+    { header: "Receita", key: "totalRevenue", format: "currency" as const },
+    { header: "% Comissão", key: "commission", format: "percent" as const },
+    { header: "Valor Comissão", key: "commissionValue", format: "currency" as const },
   ];
 
   const exportSummary = [
     { label: "Total Comissões", value: formatKz(totalCommissions) },
-    { label: "Funcionários", value: String(commissionData.length) },
+    { label: "Funcionários", value: String(items.length) },
   ];
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Comissões"
-        subtitle="Cálculo automático por funcionário"
-        actions={<ExportButton onExportCSV={() => exportToCSV({ title: "Relatório de Comissões - GenOmni Salon", subtitle: "Detalhamento por funcionário", columns: exportColumns, data: commissionData, summary: exportSummary, filename: "relatorio-comissoes" })} onExportPDF={() => exportToPDF({ title: "Relatório de Comissões", subtitle: "Detalhamento por funcionário", columns: exportColumns, data: commissionData, summary: exportSummary, filename: "relatorio-comissoes" })} />}
-      />
+      <PageHeader title="Comissões" subtitle="Cálculo automático por funcionário" actions={
+        <ExportButton
+          onExportCSV={() => exportToCSV({ title: "Relatório de Comissões - GenOmni Salon", subtitle: "Detalhamento por funcionário", columns: exportColumns, data: exportRows, summary: exportSummary, filename: "relatorio-comissoes" })}
+          onExportPDF={() => exportToPDF({ title: "Relatório de Comissões", subtitle: "Detalhamento por funcionário", columns: exportColumns, data: exportRows, summary: exportSummary, filename: "relatorio-comissoes" })}
+        />
+      } />
 
       <Card className="shadow-card overflow-hidden border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
         <CardContent className="p-5 flex items-center gap-4">
-          <div className="h-12 w-12 rounded-xl gradient-primary flex items-center justify-center shrink-0 shadow-sm"><DollarSign className="h-6 w-6 text-primary-foreground" /></div>
+          <div className="h-12 w-12 rounded-xl gradient-primary flex items-center justify-center shrink-0 shadow-sm">
+            <DollarSign className="h-6 w-6 text-primary-foreground" />
+          </div>
           <div>
             <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Total de Comissões</p>
             <p className="text-2xl font-bold text-foreground">{formatKz(totalCommissions)}</p>
@@ -68,11 +83,13 @@ const Commissions = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {commissionData.map((e: any) => (
+              {items.map((e) => (
                 <TableRow key={e.id} className="hover:bg-secondary/40 transition-colors">
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-full gradient-primary flex items-center justify-center text-primary-foreground text-xs font-bold shrink-0">{e.name.split(" ").map((n: string) => n[0]).join("")}</div>
+                      <div className="h-8 w-8 rounded-full gradient-primary flex items-center justify-center text-primary-foreground text-xs font-bold shrink-0">
+                        {String(e.name || "?").split(" ").map((n: string) => n[0]).join("")}
+                      </div>
                       <span className="font-medium">{e.name}</span>
                     </div>
                   </TableCell>

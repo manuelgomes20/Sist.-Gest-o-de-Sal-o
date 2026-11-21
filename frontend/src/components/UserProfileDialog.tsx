@@ -23,6 +23,7 @@ export interface UserProfile {
   phone: string;
   role: string;
   tenant?: string;
+  avatar?: string;
   createdAt: string;
   lastLogin?: string;
 }
@@ -33,6 +34,7 @@ interface UserProfileDialogProps {
   profile: UserProfile;
   onUpdate?: (profile: UserProfile) => void;
   onDelete?: () => void;
+  isAdmin?: boolean;
 }
 
 export function UserProfileDialog({ open, onOpenChange, profile, onUpdate, onDelete }: UserProfileDialogProps) {

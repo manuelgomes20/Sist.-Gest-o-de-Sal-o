@@ -18,7 +18,6 @@ def seed_initial_data(db: Session) -> None:
     user = db.scalar(select(User).where(User.email == email))
     if user:
         user.full_name = name
-        user.password_hash = hash_password(password)
         user.role = "super_admin"
         user.tenant_id = None
         user.status = "active"

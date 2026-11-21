@@ -9,6 +9,8 @@ import ImageUpload from "@/components/register/ImageUpload";
 import registerBg from "@/assets/register-bg.jpg";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { isValidAngolaPhone, isValidNif, passwordIssues } from "@/lib/validation";
+import { resizeImage } from "@/lib/brandingConfig";
 
 const Register = () => {
   const [step, setStep] = useState<1 | 2>(1);
@@ -34,9 +36,7 @@ const Register = () => {
 
   const handleImageChange = (file: File | null, setPreview: (p: string | null) => void) => {
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setPreview(reader.result as string);
-      reader.readAsDataURL(file);
+      resizeImage(file, 512).then(setPreview).catch(() => toast.error("Não foi possível processar a imagem"));
     } else {
       setPreview(null);
     }
@@ -44,11 +44,22 @@ const Register = () => {
 
   const handleContinueToAdmin = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isValidAngolaPhone(companyPhone)) { toast.error("Telefone da empresa inválido. Use +244 923 456 789"); return; }
+    if (!isValidNif(companyNif)) { toast.error("NIF inválido. Use 9 a 15 caracteres alfanuméricos"); return; }
     setStep(2);
   };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isValidAngolaPhone(adminPhone)) {
+      toast.error("Telefone do administrador inválido. Use +244 923 456 789");
+      return;
+    }
+    const issues = passwordIssues(adminPassword);
+    if (issues.length) {
+      toast.error(`Senha deve conter ${issues.join(", ")}`);
+      return;
+    }
     if (adminPassword !== adminConfirmPassword) {
       toast.error("As senhas não coincidem");
       return;
@@ -63,6 +74,7 @@ const Register = () => {
         company_nif: companyNif,
         company_address: companyAddress,
         company_city: "Luanda",
+        company_logo: companyLogoPreview || "",
         admin_name: adminName,
         admin_email: adminEmail,
         admin_phone: adminPhone,
@@ -132,13 +144,13 @@ const Register = () => {
                       </div>
                       <div className="space-y-1.5">
                         <Label htmlFor="companyPhone" className="text-xs font-medium">Telefone *</Label>
-                        <Input id="companyPhone" type="tel" value={companyPhone} onChange={(e) => setCompanyPhone(e.target.value)} required className="h-10 bg-background/50" />
+                        <Input id="companyPhone" type="tel" placeholder="+244 923 456 789" pattern="(?:\+?244)?\s?9[0-9]{2}\s?[0-9]{3}\s?[0-9]{3}" value={companyPhone} onChange={(e) => setCompanyPhone(e.target.value)} required className="h-10 bg-background/50" />
                       </div>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
                         <Label htmlFor="companyNif" className="text-xs font-medium">NIF *</Label>
-                        <Input id="companyNif" value={companyNif} onChange={(e) => setCompanyNif(e.target.value)} required className="h-10 bg-background/50" />
+                        <Input id="companyNif" placeholder="123456789LA042" pattern="[0-9A-Za-z]{9,15}" value={companyNif} onChange={(e) => setCompanyNif(e.target.value)} required className="h-10 bg-background/50" />
                       </div>
                       <div className="space-y-1.5">
                         <Label htmlFor="companyAddress" className="text-xs font-medium">Endereço</Label>
@@ -167,13 +179,14 @@ const Register = () => {
                       </div>
                       <div className="space-y-1.5">
                         <Label htmlFor="adminPhone" className="text-xs font-medium">Telefone *</Label>
-                        <Input id="adminPhone" type="tel" value={adminPhone} onChange={(e) => setAdminPhone(e.target.value)} required className="h-10 bg-background/50" />
+                        <Input id="adminPhone" type="tel" placeholder="+244 923 456 789" pattern="(?:\+?244)?\s?9[0-9]{2}\s?[0-9]{3}\s?[0-9]{3}" value={adminPhone} onChange={(e) => setAdminPhone(e.target.value)} required className="h-10 bg-background/50" />
                       </div>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
                         <Label htmlFor="adminPassword" className="text-xs font-medium">Senha *</Label>
                         <Input id="adminPassword" type="password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} minLength={8} required className="h-10 bg-background/50" />
+                        <p className="text-[11px] text-muted-foreground">Mín. 8 caracteres, maiúscula, minúscula, número e símbolo.</p>
                       </div>
                       <div className="space-y-1.5">
                         <Label htmlFor="adminConfirmPassword" className="text-xs font-medium">Confirmar Senha *</Label>

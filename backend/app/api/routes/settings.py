@@ -43,9 +43,11 @@ def _to_out(tenant: Tenant, settings: TenantSettings) -> TenantSettingsOut:
             "email": tenant.email,
             "address": tenant.address or "",
             "city": tenant.city or "",
+            "logo": settings.logo or "",
         },
         hours={"open": settings.open_time or "", "close": settings.close_time or ""},
         roles=settings.permissions or DEFAULT_PERMISSIONS,
+        schedule=settings.schedule or {},
     )
 
 
@@ -97,6 +99,8 @@ def update_settings(
     settings.open_time = payload.hours.open
     settings.close_time = payload.hours.close
     settings.permissions = payload.roles
+    settings.schedule = payload.schedule
+    settings.logo = payload.company.logo
 
     log_tenant_action(
         db,

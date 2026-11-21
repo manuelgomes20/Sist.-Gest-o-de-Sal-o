@@ -8,6 +8,7 @@ from app.core.deps import get_current_user
 from app.core.security import create_access_token, hash_password, verify_password
 from app.db.session import get_db
 from app.models.tenant import Tenant
+from app.models.tenant_settings import TenantSettings
 from app.models.user import User
 from app.schemas.auth import LoginRequest, RegisterTenantRequest, UserMe
 from app.schemas.common import Token
@@ -23,6 +24,10 @@ def register_tenant(payload: RegisterTenantRequest, db: Session = Depends(get_db
     exists = db.scalar(select(Tenant).where(Tenant.email == payload.company_email))
     if exists:
         raise HTTPException(status_code=400, detail="Empresa já cadastrada com este email")
+
+    nif_exists = db.scalar(select(Tenant).where(Tenant.nif == payload.company_nif))
+    if nif_exists:
+        raise HTTPException(status_code=400, detail="Empresa já cadastrada com este NIF")
 
     user_exists = db.scalar(select(User).where(User.email == payload.admin_email))
     if user_exists:
@@ -48,6 +53,8 @@ def register_tenant(payload: RegisterTenantRequest, db: Session = Depends(get_db
     )
     db.add(tenant)
     db.flush()
+    if payload.company_logo:
+        db.add(TenantSettings(tenant_id=tenant.id, logo=payload.company_logo))
 
     admin = User(
         tenant_id=tenant.id,
@@ -101,6 +108,22 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
 
 @router.get("/me", response_model=UserMe)
 def me(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    tenant_data = None
+    if current_user.tenant_id:
+        tenant = db.get(Tenant, current_user.tenant_id)
+        if tenant:
+            tenant_data = {
+                "id": tenant.id,
+                "name": tenant.name,
+                "nif": tenant.nif,
+                "owner": tenant.owner,
+                "email": tenant.email,
+                "phone": tenant.phone,
+                "address": tenant.address or "",
+                "city": tenant.city or "",
+                "plan": tenant.plan,
+                "status": tenant.status,
+            }
     return UserMe(
         id=current_user.id,
         full_name=current_user.full_name,
@@ -109,4 +132,5 @@ def me(current_user: User = Depends(get_current_user), db: Session = Depends(get
         role=current_user.role,
         tenant_id=current_user.tenant_id,
         permissions=get_effective_permissions(db, current_user),
+        tenant=tenant_data,
     )

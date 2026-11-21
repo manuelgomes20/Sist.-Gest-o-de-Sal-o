@@ -1,4 +1,5 @@
-import { LayoutDashboard, Building2, LifeBuoy, FileSearch, Crown, LogOut } from "lucide-react";
+import { LayoutDashboard, Building2, LifeBuoy, FileSearch, Crown, LogOut, Settings, PanelBottom, Palette, Scale } from "lucide-react";
+import genomniLogo from "@/assets/genomni-logo.png";
 import { useState } from "react";
 import { NavLink } from "@/components/NavLink";
 import { useNavigate } from "react-router-dom";
@@ -11,25 +12,27 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { useAuth } from "@/contexts/AuthContext";
 
 const items = [
   { title: "Visão Geral", url: "/super-admin", icon: LayoutDashboard },
   { title: "Empresas", url: "/super-admin/tenants", icon: Building2 },
   { title: "Suporte Técnico", url: "/super-admin/support", icon: LifeBuoy },
   { title: "Logs da Plataforma", url: "/super-admin/logs", icon: FileSearch },
+  { title: "Branding & Aparência", url: "/super-admin/branding", icon: Palette },
+  { title: "Termos & Políticas", url: "/super-admin/legal", icon: Scale },
+  { title: "Configurações", url: "/super-admin/settings", icon: Settings },
+  { title: "Rodapé do Site", url: "/super-admin/footer", icon: PanelBottom },
 ];
 
 export function SuperAdminSidebar() {
-  const { state } = useSidebar();
+  const { state, isMobile, setOpenMobile } = useSidebar();
   const collapsed = state === "collapsed";
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const handleNavClick = () => { if (isMobile) setOpenMobile(false); };
   const [logoutOpen, setLogoutOpen] = useState(false);
 
   const handleLogout = () => {
     setLogoutOpen(false);
-    logout();
     toast.success("Sessão de Super Admin terminada");
     navigate("/");
   };
@@ -38,9 +41,7 @@ export function SuperAdminSidebar() {
     <Sidebar collapsible="icon">
       <SidebarContent>
         <div className="p-4 flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-accent to-primary flex items-center justify-center shrink-0 shadow-md">
-            <Crown className="h-4 w-4 text-primary-foreground" />
-          </div>
+          <img src={genomniLogo} alt="GenOmni" className="h-8 w-8 rounded-lg object-contain shrink-0 drop-shadow-sm" />
           {!collapsed && (
             <div className="flex flex-col">
               <span className="font-serif font-bold text-sidebar-foreground text-sm leading-tight">Super Admin</span>
@@ -58,6 +59,7 @@ export function SuperAdminSidebar() {
                     <NavLink
                       to={item.url}
                       end={item.url === "/super-admin"}
+                      onClick={handleNavClick}
                       className="hover:bg-sidebar-accent/50"
                       activeClassName="bg-sidebar-accent text-sidebar-primary font-medium"
                     >

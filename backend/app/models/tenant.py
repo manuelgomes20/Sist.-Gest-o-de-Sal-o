@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -26,5 +26,8 @@ class Tenant(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     last_access: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     next_billing: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    billing_cycle: Mapped[str] = mapped_column(String(20), default="monthly")
+    auto_suspend: Mapped[bool] = mapped_column(Boolean, default=True)
+    grace_days: Mapped[int] = mapped_column(Integer, default=5)
 
     users_rel = relationship("User", back_populates="tenant")

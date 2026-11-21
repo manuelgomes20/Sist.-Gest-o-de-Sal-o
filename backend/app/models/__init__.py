@@ -9,6 +9,22 @@ from app.models.support import SupportReply, SupportTicket
 from app.models.tenant import Tenant
 from app.models.tenant_settings import TenantSettings
 from app.models.user import User
+from app.models.operations import (
+    AlertRecord,
+    AttendanceRecord,
+    CommissionRecord,
+    LegalAcceptance,
+    LegalDocument,
+    PayrollAdvance,
+    PayrollDeduction,
+    PayrollRun,
+    PlatformSettings,
+    Receivable,
+    ReceivablePayment,
+    ServiceProductUsage,
+    StockMovement,
+    TenantEvent,
+)
 
 __all__ = [
     "Tenant",
@@ -23,4 +39,18 @@ __all__ = [
     "SupportReply",
     "AuditLog",
     "TenantSettings",
+    "AlertRecord",
+    "AttendanceRecord",
+    "CommissionRecord",
+    "LegalAcceptance",
+    "LegalDocument",
+    "PayrollAdvance",
+    "PayrollDeduction",
+    "PayrollRun",
+    "PlatformSettings",
+    "Receivable",
+    "ReceivablePayment",
+    "ServiceProductUsage",
+    "StockMovement",
+    "TenantEvent",
 ]

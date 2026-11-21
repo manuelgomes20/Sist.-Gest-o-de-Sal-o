@@ -8,10 +8,11 @@ class Settings(BaseSettings):
 
     project_name: str = "GenOmni Salon API"
     api_v1_prefix: str = "/api/v1"
+    environment: str = "development"
 
     database_url: str = "postgresql://saas:saas123@db:5432/saas_db"
     redis_url: str = "redis://redis:6379/0"
-    secret_key: str = "supersecret"
+    secret_key: str = "development-only-secret-key-change-me"
     access_token_expire_minutes: int = 60 * 12
     cache_ttl_seconds: int = 60
     cors_origins: str = "http://localhost:8080,http://localhost:5173,http://127.0.0.1:5173"

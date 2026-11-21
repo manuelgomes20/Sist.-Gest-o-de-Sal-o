@@ -1,6 +1,8 @@
 from datetime import date
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator
+
+from app.core.validators import normalize_phone
 
 
 class ClientBase(BaseModel):
@@ -9,6 +11,11 @@ class ClientBase(BaseModel):
     email: EmailStr | None = None
     birth_date: date | None = None
     notes: str = ""
+
+    @field_validator("phone")
+    @classmethod
+    def validate_phone(cls, value: str) -> str:
+        return normalize_phone(value) if value else ""
 
 
 class ClientCreate(ClientBase):

@@ -1,0 +1,20 @@
+# Environment files
+.env
+backend/.env
+frontend/.env
+frontend/.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Node/build artifacts
+node_modules/
+dist/
+dist-ssr/
+.vite/
+
+# Logs
+*.log

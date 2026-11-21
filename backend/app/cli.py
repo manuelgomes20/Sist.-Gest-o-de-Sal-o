@@ -84,7 +84,6 @@ def create_super_admin(email: str, password: str, name: str) -> None:
             db.add(user)
             action = "criada"
 
-        db.execute(delete(User).where(User.email == "superadmin@genomni.ao", User.email != email))
         db.commit()
         print(f"Conta super admin {action}: {email}")
     finally:

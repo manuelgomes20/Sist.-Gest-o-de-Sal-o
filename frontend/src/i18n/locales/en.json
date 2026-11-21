@@ -1,0 +1,90 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "back": "Back",
+    "continue": "Continue",
+    "loading": "Loading...",
+    "search": "Search",
+    "close": "Close",
+    "language": "Language",
+    "portuguese": "Portuguese",
+    "english": "English"
+  },
+  "auth": {
+    "login": "Sign in",
+    "register": "Sign up",
+    "logout": "Sign out",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "welcomeBack": "Welcome back",
+    "enterCredentials": "Enter your credentials to access the panel",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "passwordStrength": {
+      "weak": "Weak",
+      "medium": "Medium",
+      "strong": "Strong",
+      "veryStrong": "Very strong"
+    },
+    "passwordHint": "Min. 8 chars, with uppercase, lowercase, numbers and symbols"
+  },
+  "validation": {
+    "nifRequired": "NIF required",
+    "nifInvalid": "Invalid NIF — must be 9 digits",
+    "nifValid": "Valid NIF",
+    "phoneInvalid": "Invalid phone — 9 digits after +244",
+    "phoneValid": "Valid phone",
+    "passwordTooShort": "Minimum 8 characters",
+    "passwordTooLong": "Maximum 64 characters",
+    "passwordsDoNotMatch": "Passwords don't match"
+  },
+  "landing": {
+    "tagline": "SaaS platform for beauty salons",
+    "heroLine1": "Manage your salon with",
+    "heroLine2": "elegance and efficiency",
+    "heroSubtitle": "Everything you need to run your business: scheduling, finance, inventory, clients and more — all in one place.",
+    "ctaStart": "Get Started",
+    "ctaHaveAccount": "I have an account",
+    "ctaRegister": "Register Company"
+  },
+  "branding": {
+    "title": "Branding & Appearance",
+    "subtitle": "Manage the platform's visual identity — white-label ready",
+    "brandName": "Brand Name",
+    "brandTagline": "Tagline",
+    "landingLogo": "Landing Page Logo",
+    "loginLogo": "Login Logo",
+    "registerLogo": "Register Logo",
+    "footerLogo": "Footer Logo",
+    "favicon": "Favicon",
+    "heroBanner": "Hero Banner",
+    "loginBanner": "Login Banner",
+    "uploadImage": "Upload image",
+    "removeImage": "Remove",
+    "preview": "Preview",
+    "save": "Save Branding"
+  },
+  "alerts": {
+    "title": "Smart Alerts",
+    "subtitle": "Configure low-stock and appointment notifications",
+    "stockAlerts": "Stock Alerts",
+    "appointmentAlerts": "Appointment Alerts",
+    "enabled": "Enabled",
+    "stockThreshold": "Low stock threshold",
+    "repeatMinutes": "Repeat every (minutes)",
+    "leadMinutes": "Notify in advance (minutes)",
+    "soundEnabled": "Alert sound",
+    "popupEnabled": "Visual popup",
+    "quietHoursStart": "Quiet hours start",
+    "quietHoursEnd": "Quiet hours end",
+    "save": "Save preferences",
+    "noAlerts": "No alerts right now",
+    "markAllRead": "Mark all as read",
+    "lowStock": "Low stock",
+    "upcomingAppointment": "Upcoming appointment"
+  }
+}

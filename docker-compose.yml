@@ -5,12 +5,20 @@ services:
     container_name: backend
     restart: always
     env_file:
-      - .env
+      - ./backend/.env
     ports:
       - "8000:8000"
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     networks:
       - salao_saas
 
@@ -26,6 +34,11 @@ services:
       - "5433:5432"
     volumes:
       - salao_saas:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U saas -d saas_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
       - salao_saas
 
@@ -35,24 +48,33 @@ services:
     restart: always
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
     networks:
       - salao_saas
 
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    restart: always
+  frontend:
+    image: node:22-alpine
+    container_name: frontend
+    working_dir: /app
+    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0"
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000/api/v1
     ports:
-      - "80:80"
+      - "8080:8080"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./frontend/dist:/usr/share/nginx/html:ro
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
     networks:
       - salao_saas
 
 volumes:
   salao_saas:
     name: salao_saas
+  frontend_node_modules:
 
 networks:
   salao_saas:

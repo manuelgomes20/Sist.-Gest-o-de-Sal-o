@@ -159,6 +159,10 @@ export const api = {
     create: (body: any) => apiRequest<any>("/products", { method: "POST", body }),
     update: (id: string, body: any) => apiRequest<any>(`/products/${id}`, { method: "PUT", body }),
     delete: (id: string) => apiRequest<any>(`/products/${id}`, { method: "DELETE" }),
+    movements: () => apiRequest<any[]>("/products/movements"),
+    createMovement: (body: any) => apiRequest<any>("/products/movements", { method: "POST", body }),
+    bom: () => apiRequest<Record<string, any[]>>("/products/bom"),
+    updateBom: (serviceId: string, body: any[]) => apiRequest<any>(`/products/bom/${serviceId}`, { method: "PUT", body }),
   },
 
   appointments: {
@@ -166,17 +170,55 @@ export const api = {
     create: (body: any) => apiRequest<any>("/appointments", { method: "POST", body }),
     update: (id: string, body: any) => apiRequest<any>(`/appointments/${id}`, { method: "PUT", body }),
     delete: (id: string) => apiRequest<any>(`/appointments/${id}`, { method: "DELETE" }),
+    finalize: (id: string, body: any) => apiRequest<any>(`/appointments/${id}/finalize`, { method: "POST", body }),
   },
 
   financial: {
     summary: () => apiRequest<any>("/financial/summary"),
-    commissions: () => apiRequest<any>("/financial/commissions"),
+    commissions: (month?: string) => apiRequest<any>(`/financial/commissions${month ? `?month=${month}` : ""}`),
   },
 
   cashier: {
     movements: () => apiRequest<any[]>("/cashier/movements"),
     summary: () => apiRequest<any>("/cashier/summary"),
     createMovement: (body: any) => apiRequest<any>("/cashier/movements", { method: "POST", body }),
+  },
+
+  receivables: {
+    list: () => apiRequest<any[]>("/receivables"),
+    create: (body: any) => apiRequest<any>("/receivables", { method: "POST", body }),
+    pay: (id: string, body: any) => apiRequest<any>(`/receivables/${id}/payments`, { method: "POST", body }),
+  },
+
+  attendance: {
+    records: (month?: string) => apiRequest<any[]>(`/attendance/records${month ? `?month=${month}` : ""}`),
+    upsert: (body: any) => apiRequest<any>("/attendance/records", { method: "POST", body }),
+    delete: (id: string) => apiRequest<any>(`/attendance/records/${id}`, { method: "DELETE" }),
+    settings: () => apiRequest<any>("/attendance/settings"),
+    updateSettings: (settings: any) => apiRequest<any>("/attendance/settings", { method: "PUT", body: { settings } }),
+  },
+
+  payroll: {
+    state: () => apiRequest<any>("/payroll/state"),
+    addAdvance: (body: any) => apiRequest<any>("/payroll/advances", { method: "POST", body }),
+    addDeduction: (body: any) => apiRequest<any>("/payroll/deductions", { method: "POST", body }),
+    run: (body: any) => apiRequest<any>("/payroll/runs", { method: "POST", body }),
+  },
+
+  alerts: {
+    list: () => apiRequest<any[]>("/alerts"),
+    markRead: (id: string) => apiRequest<any>(`/alerts/${id}/read`, { method: "PATCH" }),
+    config: () => apiRequest<any>("/alerts/config"),
+    updateConfig: (config: any) => apiRequest<any>("/alerts/config", { method: "PUT", body: { config } }),
+  },
+
+  platform: {
+    setting: (key: string) => apiRequest<any>(`/platform/settings/${key}`, { auth: false }),
+    updateSetting: (key: string, value: any) => apiRequest<any>(`/platform/settings/${key}`, { method: "PUT", body: { value } }),
+    legal: (type: string) => apiRequest<any>(`/platform/legal/${type}`, { auth: false }),
+    legalDocuments: () => apiRequest<any[]>("/platform/legal"),
+    saveLegalDocument: (body: any) => apiRequest<any>("/platform/legal", { method: "POST", body }),
+    acceptLegal: (type: string) => apiRequest<any>(`/platform/legal/${type}/accept`, { method: "POST" }),
   },
 
   settings: {

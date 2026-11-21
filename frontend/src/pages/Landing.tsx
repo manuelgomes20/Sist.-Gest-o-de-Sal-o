@@ -2,6 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Calendar, Users, Scissors, BarChart3, Shield, Zap, ChevronRight, Star, Quote } from "lucide-react";
 import salonBg from "@/assets/salon-hero-bg.jpg";
+import BrandLogo, { useBrandingConfig } from "@/components/BrandLogo";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import SiteFooter from "@/components/SiteFooter";
 
 const features = [
   { icon: Calendar, title: "Agenda Inteligente", description: "Gerencie agendamentos com facilidade. Status em tempo real e notificações automáticas." },
@@ -44,21 +47,27 @@ const testimonials = [
 ];
 
 const Landing = () => {
+  const branding = useBrandingConfig();
+  const heroImg = branding.heroBanner || salonBg;
   return (
     <div className="min-h-screen bg-background">
       {/* Nav */}
       <nav className="fixed top-0 w-full z-50 glass">
         <div className="container mx-auto flex items-center justify-between h-16 px-4">
           <div className="flex items-center gap-2">
-            <Scissors className="h-6 w-6 text-primary" />
-            <span className="font-serif text-xl font-bold text-foreground">GenOmni Salon</span>
+            <BrandLogo variant="landing" className="h-9 w-auto drop-shadow-sm" />
+            <span className="font-serif text-xl font-bold text-foreground hidden sm:inline" translate="no">{branding.brandName}</span>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" asChild>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <LanguageSwitcher compact />
+            <Button variant="ghost" asChild size="sm" className="text-sm">
               <Link to="/login">Entrar</Link>
             </Button>
-            <Button asChild>
-              <Link to="/register">Cadastrar Empresa</Link>
+            <Button asChild size="sm" className="text-sm">
+              <Link to="/register">
+                <span className="hidden sm:inline">Cadastrar Empresa</span>
+                <span className="sm:hidden">Cadastrar</span>
+              </Link>
             </Button>
           </div>
         </div>
@@ -67,7 +76,7 @@ const Landing = () => {
       {/* Hero */}
       <section className="relative pt-32 pb-20 px-4 min-h-[90vh] flex items-center">
         <div className="absolute inset-0 z-0">
-          <img src={salonBg} alt="" className="w-full h-full object-cover" width={1920} height={1080} />
+          <img src={heroImg} alt="" className="w-full h-full object-cover" width={1920} height={1080} />
           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
         </div>
         <div className="container mx-auto text-center max-w-4xl relative z-10">
@@ -184,15 +193,7 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t py-8 px-4">
-        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between text-sm text-muted-foreground">
-          <div className="flex items-center gap-2 mb-4 md:mb-0">
-            <Scissors className="h-4 w-4 text-primary" />
-            <span className="font-serif font-semibold text-foreground">GenOmni Salon</span>
-          </div>
-          <p>© 2026 GenOmni Salon. Todos os direitos reservados.</p>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 };

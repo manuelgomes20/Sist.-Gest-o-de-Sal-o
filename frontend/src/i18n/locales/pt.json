@@ -1,0 +1,90 @@
+{
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "back": "Voltar",
+    "continue": "Continuar",
+    "loading": "A carregar...",
+    "search": "Procurar",
+    "close": "Fechar",
+    "language": "Idioma",
+    "portuguese": "Português",
+    "english": "Inglês"
+  },
+  "auth": {
+    "login": "Entrar",
+    "register": "Cadastrar",
+    "logout": "Sair",
+    "email": "E-mail",
+    "password": "Senha",
+    "forgotPassword": "Esqueceu a senha?",
+    "welcomeBack": "Bem-vindo de volta",
+    "enterCredentials": "Insira as suas credenciais para aceder ao painel",
+    "showPassword": "Mostrar senha",
+    "hidePassword": "Ocultar senha",
+    "passwordStrength": {
+      "weak": "Fraca",
+      "medium": "Média",
+      "strong": "Forte",
+      "veryStrong": "Muito forte"
+    },
+    "passwordHint": "Mín. 8 caracteres, com maiúsculas, minúsculas, números e símbolos"
+  },
+  "validation": {
+    "nifRequired": "NIF obrigatório",
+    "nifInvalid": "NIF inválido — deve ter 9 dígitos",
+    "nifValid": "NIF válido",
+    "phoneInvalid": "Telefone inválido — 9 dígitos após +244",
+    "phoneValid": "Telefone válido",
+    "passwordTooShort": "Mínimo de 8 caracteres",
+    "passwordTooLong": "Máximo de 64 caracteres",
+    "passwordsDoNotMatch": "As senhas não coincidem"
+  },
+  "landing": {
+    "tagline": "Plataforma SaaS para Salões de Beleza",
+    "heroLine1": "Gerencie seu salão com",
+    "heroLine2": "elegância e eficiência",
+    "heroSubtitle": "Tudo o que você precisa para administrar seu negócio: agenda, financeiro, estoque, clientes e muito mais — tudo em um só lugar.",
+    "ctaStart": "Começar Agora",
+    "ctaHaveAccount": "Já tenho conta",
+    "ctaRegister": "Cadastrar Empresa"
+  },
+  "branding": {
+    "title": "Branding & Aparência",
+    "subtitle": "Gerencie a identidade visual da plataforma — preparado para white-label",
+    "brandName": "Nome da Marca",
+    "brandTagline": "Slogan",
+    "landingLogo": "Logótipo da Landing Page",
+    "loginLogo": "Logótipo do Login",
+    "registerLogo": "Logótipo do Cadastro",
+    "footerLogo": "Logótipo do Rodapé",
+    "favicon": "Favicon",
+    "heroBanner": "Banner Hero",
+    "loginBanner": "Banner do Login",
+    "uploadImage": "Carregar imagem",
+    "removeImage": "Remover",
+    "preview": "Pré-visualização",
+    "save": "Guardar Branding"
+  },
+  "alerts": {
+    "title": "Alertas Inteligentes",
+    "subtitle": "Configure notificações de estoque baixo e agendamentos",
+    "stockAlerts": "Alertas de Estoque",
+    "appointmentAlerts": "Alertas de Agenda",
+    "enabled": "Ativo",
+    "stockThreshold": "Limiar de stock baixo",
+    "repeatMinutes": "Repetir a cada (minutos)",
+    "leadMinutes": "Avisar com antecedência (minutos)",
+    "soundEnabled": "Som de alerta",
+    "popupEnabled": "Pop-up visual",
+    "quietHoursStart": "Início do silêncio",
+    "quietHoursEnd": "Fim do silêncio",
+    "save": "Guardar preferências",
+    "noAlerts": "Sem alertas no momento",
+    "markAllRead": "Marcar todos como lidos",
+    "lowStock": "Stock baixo",
+    "upcomingAppointment": "Agendamento próximo"
+  }
+}

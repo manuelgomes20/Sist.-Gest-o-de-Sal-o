@@ -1,6 +1,6 @@
 import {
   LayoutDashboard, Calendar, Scissors, Users, UserCheck, Package, DollarSign,
-  BarChart3, Wallet, Settings, LogOut, ShieldCheck,
+  BarChart3, Wallet, Settings, LogOut, ShieldCheck, Bell, Clock, Banknote,
 } from "lucide-react";
 import { useState } from "react";
 import { NavLink } from "@/components/NavLink";
@@ -15,30 +15,44 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
-import { hasTenantPermission, TenantPermission } from "@/lib/permissions";
+import { hasTenantPermission, tenantRoutePermissions } from "@/lib/permissions";
 
 const mainItems = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, permission: null },
-  { title: "Agenda", url: "/dashboard/agenda", icon: Calendar, permission: "agenda" },
-  { title: "Clientes", url: "/dashboard/clients", icon: Users, permission: "clients" },
-  { title: "Funcionários", url: "/dashboard/employees", icon: UserCheck, permission: "employees" },
-  { title: "Serviços", url: "/dashboard/services", icon: Scissors, permission: "services" },
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+  { title: "Agenda", url: "/dashboard/agenda", icon: Calendar },
+  { title: "Clientes", url: "/dashboard/clients", icon: Users },
+  { title: "Serviços", url: "/dashboard/services", icon: Scissors },
+];
+
+const teamItems = [
+  { title: "Funcionários", url: "/dashboard/employees", icon: UserCheck },
+  { title: "Ponto Eletrónico", url: "/dashboard/attendance", icon: Clock },
+  { title: "Folha Salarial", url: "/dashboard/payroll", icon: Banknote },
+  { title: "Comissões", url: "/dashboard/commissions", icon: DollarSign },
 ];
 
 const businessItems = [
-  { title: "Financeiro", url: "/dashboard/financial", icon: BarChart3, permission: "financial" },
-  { title: "Caixa", url: "/dashboard/cashier", icon: Wallet, permission: "cashier" },
-  { title: "Comissões", url: "/dashboard/commissions", icon: DollarSign, permission: "commissions" },
-  { title: "Estoque", url: "/dashboard/stock", icon: Package, permission: "stock" },
+  { title: "Financeiro", url: "/dashboard/financial", icon: BarChart3 },
+  { title: "Caixa", url: "/dashboard/cashier", icon: Wallet },
+  { title: "A Receber", url: "/dashboard/receivables", icon: DollarSign },
+  { title: "Estoque", url: "/dashboard/stock", icon: Package },
 ];
 
 const systemItems = [
-  { title: "Auditoria", url: "/dashboard/audit", icon: ShieldCheck, permission: "audit" },
-  { title: "Configurações", url: "/dashboard/settings", icon: Settings, permission: "settings" },
+  { title: "Alertas Inteligentes", url: "/dashboard/alerts", icon: Bell },
+  { title: "Auditoria", url: "/dashboard/audit", icon: ShieldCheck },
+  { title: "Configurações", url: "/dashboard/settings", icon: Settings },
 ];
 
-export function AppSidebar() {
-  const { state } = useSidebar();
+
+interface AppSidebarProps {
+  tenantName?: string;
+  tenantLogo?: string;
+}
+
+export function AppSidebar({ tenantName = "Meu Salão", tenantLogo }: AppSidebarProps) {
+  const { state, isMobile, setOpenMobile } = useSidebar();
+  const handleNavClick = () => { if (isMobile) setOpenMobile(false); };
   const collapsed = state === "collapsed";
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -52,8 +66,10 @@ export function AppSidebar() {
     navigate("/");
   };
 
-  const renderGroup = (label: string, items: Array<{ title: string; url: string; icon: any; permission: TenantPermission | null }>) => {
-    const visibleItems = items.filter((item) => hasTenantPermission(user, item.permission));
+  const canSeeItem = (url: string) => hasTenantPermission(user, tenantRoutePermissions[url]);
+
+  const renderGroup = (label: string, items: typeof mainItems) => {
+    const visibleItems = items.filter(item => canSeeItem(item.url));
     if (visibleItems.length === 0) return null;
 
     return (
@@ -67,6 +83,7 @@ export function AppSidebar() {
                 <NavLink
                   to={item.url}
                   end={item.url === "/dashboard"}
+                  onClick={handleNavClick}
                   className="hover:bg-sidebar-accent/50"
                   activeClassName="bg-sidebar-accent text-sidebar-primary font-medium"
                 >
@@ -79,21 +96,27 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
-    );
+  );
   };
 
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
         <div className="p-4 flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg gradient-primary flex items-center justify-center shrink-0">
-            <Scissors className="h-4 w-4 text-primary-foreground" />
-          </div>
-          {!collapsed && <span className="font-serif font-bold text-sidebar-foreground text-lg">GenOmni Salon</span>}
+          {tenantLogo ? (
+            <img src={tenantLogo} alt={tenantName} className="h-8 w-8 rounded-lg object-contain shrink-0 border border-border/40 shadow-sm" />
+          ) : (
+            <div className="h-8 w-8 rounded-lg gradient-primary flex items-center justify-center text-primary-foreground font-bold text-xs shrink-0">
+              {tenantName.substring(0, 2).toUpperCase()}
+            </div>
+          )}
+          {!collapsed && <span className="font-serif font-bold text-sidebar-foreground text-lg truncate">{tenantName}</span>}
         </div>
         {renderGroup("Principal", mainItems)}
+        {renderGroup("Equipa", teamItems)}
         {renderGroup("Negócio", businessItems)}
         {renderGroup("Sistema", systemItems)}
+
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>

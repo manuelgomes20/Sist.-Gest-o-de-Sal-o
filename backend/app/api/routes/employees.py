@@ -51,8 +51,8 @@ def create_employee(
     if _requires_account(payload.type):
         if not payload.email:
             raise HTTPException(status_code=400, detail="E-mail é obrigatório para este tipo de funcionário")
-        if not payload.password or len(payload.password) < 6:
-            raise HTTPException(status_code=400, detail="Senha com pelo menos 6 caracteres é obrigatória para este tipo de funcionário")
+        if not payload.password:
+            raise HTTPException(status_code=400, detail="Senha forte é obrigatória para este tipo de funcionário")
 
         user_exists = db.scalar(select(User).where(User.email == payload.email))
         if user_exists:
@@ -125,8 +125,8 @@ def update_employee(
         if conflicting_user and (not existing_user or conflicting_user.id != existing_user.id):
             raise HTTPException(status_code=400, detail="Já existe um utilizador com este e-mail")
 
-        if not existing_user and (not payload.password or len(payload.password) < 6):
-            raise HTTPException(status_code=400, detail="Defina uma senha com pelo menos 6 caracteres para criar a conta de acesso")
+        if not existing_user and not payload.password:
+            raise HTTPException(status_code=400, detail="Defina uma senha forte para criar a conta de acesso")
 
         if existing_user:
             existing_user.full_name = payload.name

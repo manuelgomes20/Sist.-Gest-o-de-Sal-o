@@ -19,6 +19,9 @@ class TenantOut(BaseModel):
     created_at: datetime
     last_access: datetime
     next_billing: datetime
+    billing_cycle: str = "monthly"
+    auto_suspend: bool = True
+    grace_days: int = 5
 
 
 class TenantStatusUpdate(BaseModel):

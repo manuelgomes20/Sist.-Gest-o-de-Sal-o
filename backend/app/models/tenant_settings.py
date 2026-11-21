@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import ForeignKey, JSON, String
+from sqlalchemy import ForeignKey, JSON, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
@@ -14,3 +14,7 @@ class TenantSettings(Base):
     open_time: Mapped[str] = mapped_column(String(10), default="")
     close_time: Mapped[str] = mapped_column(String(10), default="")
     permissions: Mapped[dict] = mapped_column(JSON, default=dict)
+    schedule: Mapped[dict] = mapped_column(JSON, default=dict)
+    alert_config: Mapped[dict] = mapped_column(JSON, default=dict)
+    attendance_settings: Mapped[dict] = mapped_column(JSON, default=dict)
+    logo: Mapped[str] = mapped_column(Text, default="")

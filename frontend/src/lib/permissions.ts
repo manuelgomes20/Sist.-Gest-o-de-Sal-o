@@ -6,7 +6,11 @@ export type TenantPermission =
   | "financial"
   | "cashier"
   | "commissions"
+  | "receivables"
   | "stock"
+  | "attendance"
+  | "payroll"
+  | "alerts"
   | "audit"
   | "settings";
 
@@ -19,7 +23,11 @@ export const tenantRoutePermissions: Record<string, TenantPermission | null> = {
   "/dashboard/financial": "financial",
   "/dashboard/cashier": "cashier",
   "/dashboard/commissions": "commissions",
+  "/dashboard/receivables": "receivables",
   "/dashboard/stock": "stock",
+  "/dashboard/attendance": "attendance",
+  "/dashboard/payroll": "payroll",
+  "/dashboard/alerts": "alerts",
   "/dashboard/audit": "audit",
   "/dashboard/settings": "settings",
 };
@@ -29,11 +37,15 @@ const tenantFallbackOrder: string[] = [
   "/dashboard/agenda",
   "/dashboard/clients",
   "/dashboard/cashier",
+  "/dashboard/receivables",
   "/dashboard/commissions",
   "/dashboard/employees",
+  "/dashboard/attendance",
+  "/dashboard/payroll",
   "/dashboard/services",
   "/dashboard/financial",
   "/dashboard/stock",
+  "/dashboard/alerts",
   "/dashboard/audit",
   "/dashboard/settings",
 ];
